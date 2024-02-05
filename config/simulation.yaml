@@ -1,0 +1,74 @@
+# Sensor Settings
+numberOfRings: 32                                  # number of lidar channel (i.e., 16, 32, 64, 128)
+samplesPerRing: 1024                          # lidar horizontal resolution (Velodyne:1800, Ouster:512,1024,2048)
+timeField: "t"                              # point timestamp field, Velodyne - "time", Ouster - "t"
+downsampleRate: 1                           # default: 1. Downsample your data if too many points. i.e., 16 = 64 / 4, 16 = 16 / 1 
+lidarMinRange: 1.0                          # default: 1.0, minimum lidar range to be used
+lidarMaxRange: 30.0                        # default: 1000.0, maximum lidar range to be used
+  
+motor_speeds:
+  mass: 2.0 # kg
+  gravity: 9.8 # m*s^(-2)
+  propMass: 0.005 # kg
+  numMotors: 4
+  motorConstant: 16.48
+  momentConstant: 0.016
+
+  linAccNoise: 0.1
+  angAccNoise: 0.1
+  linAccBiasNoise: 0.01
+  angAccBiasNoise: 0.01
+
+  initBias:
+    angular:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    linear:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+
+# LOAM feature threshold
+edgeThreshold: 1.0
+surfThreshold: 0.1
+edgeFeatureMinValidNum: 10
+surfFeatureMinValidNum: 100
+
+# voxel filter paprams
+odometrySurfLeafSize: 0.4                     # default: 0.4 - outdoor, 0.2 - indoor
+mappingCornerLeafSize: 0.2                    # default: 0.2 - outdoor, 0.1 - indoor
+mappingSurfLeafSize: 0.4                      # default: 0.4 - outdoor, 0.2 - indoor
+
+# CPU Params
+numberOfCores: 8                              # number of cores for mapping optimization
+
+# Surrounding map
+surroundingkeyframeAddingDistThreshold: 1.0   # meters, regulate keyframe adding threshold
+surroundingkeyframeAddingAngleThreshold: 0.2  # radians, regulate keyframe adding threshold
+surroundingKeyframeDensity: 2.0               # meters, downsample surrounding keyframe poses   
+surroundingKeyframeSearchRadius: 50.0         # meters, within n meters scan-to-map optimization (when loop closure disabled)
+
+# Loop closure
+loopClosureEnableFlag: false
+loopClosureFrequency: 1.0                     # Hz, regulate loop closure constraint add frequency
+surroundingKeyframeSize: 50                   # submap size (when loop closure enabled)
+historyKeyframeSearchRadius: 15.0             # meters, key frame that is within n meters from current pose will be considerd for loop closure
+historyKeyframeSearchTimeDiff: 30.0           # seconds, key frame that is n seconds older will be considered for loop closure
+historyKeyframeSearchNum: 25                  # number of hostory key frames will be fused into a submap for loop closure
+historyKeyframeFitnessScore: 0.3              # icp threshold, the smaller the better alignment
+
+# Visualization
+globalMapVisualizationSearchRadius: 1000.0    # meters, global map visualization radius
+globalMapVisualizationPoseDensity: 10.0       # meters, global map visualization keyframe density
+globalMapVisualizationLeafSize: 1.0           # meters, global map visualization cloud density
+
+# GPS Settings
+useGpsElevation: false                      # if GPS elevation is bad, set to "false"
+gpsCovThreshold: 2.0                        # m^2, threshold for using GPS data
+poseCovThreshold: 25.0                      # m^2, threshold for using GPS data
+
+# Export settings
+savePCD: false                              # https://github.com/TixiaoShan/LIO-SAM/issues/3
+savePCDDirectory: "/Downloads/LOAM/"        # in your home folder, starts and ends with "/". Warning: the code deletes "LOAM" folder then recreates it. See "mapOptimization" for implementation
+

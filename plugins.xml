@@ -1,0 +1,29 @@
+<library path="lib/libImageProjection">
+  <class name="maslo/ImageProjection" type="maslo::image_projection::ImageProjection" base_class_type="nodelet::Nodelet">
+    <description>ImageProjection nodelet</description>
+  </class>
+</library>
+
+<library path="lib/libFeatureExtraction">
+  <class name="maslo/FeatureExtraction" type="maslo::feature_extraction::FeatureExtraction" base_class_type="nodelet::Nodelet">
+    <description>FeatureExtraction nodelet</description>
+  </class>
+</library>
+
+<library path="lib/libMapOptimization">
+  <class name="maslo/MapOptimization" type="maslo::map_optimization::MapOptimization" base_class_type="nodelet::Nodelet">
+    <description>MapOptimization nodelet</description>
+  </class>
+</library>
+
+<library path="lib/libMasPreintegration">
+  <class name="maslo/MasPreintegration" type="maslo::mas_preintegration::MasPreintegration" base_class_type="nodelet::Nodelet">
+    <description>MasPreintegration nodelet</description>
+  </class>
+</library>
+
+<library path="lib/libTransformFusion">
+  <class name="maslo/TransformFusion" type="maslo::transform_fusion::TransformFusion" base_class_type="nodelet::Nodelet">
+    <description>TransformFusion nodelet</description>
+  </class>
+</library>
