@@ -7,7 +7,8 @@
 
     <arg name="node_prefix" default=""/>
 
-    <arg name="is_simulation" default="true" />
+    <arg if="$(eval arg('RUN_TYPE') == 'simulation')" name="is_simulation" value="true" />
+    <arg if="$(eval arg('RUN_TYPE') == 'realworld')" name="is_simulation" value="false" />
     <arg if="$(eval arg('RUN_TYPE') == 'simulation')" name="config_file" value="$(find maslo)/config/simulation.yaml" />
     <arg if="$(eval arg('RUN_TYPE') == 'realworld')" name="config_file" value="$(find maslo)/config/realworld.yaml" />
 
@@ -29,7 +30,7 @@
 
 <!-- TODO move to HW API -->
 <!--//{ motor_speed_sync nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)motor_speed_sync" args="$(arg nodelet) gtsam_playground/MotorSpeedTopicSync $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_topic_sync" args="$(arg nodelet) mas_topic_sync/MasTopicSync $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- parameters -->
         <param name="uav_name" type="string" value="$(arg UAV_NAME)" />
@@ -41,14 +42,14 @@
         <remap from="~esc_status_in" to="mavros/esc_status" />
 
         <!-- publishers -->
-        <remap from="~motor_speeds_sync_out" to="$(arg node_prefix)motor_speed_sync/motor_speeds" />
+        <remap from="~motor_speeds_sync_out" to="$(arg node_prefix)mas_topic_sync/motor_speeds" />
 
 
       </node>
 <!--//}-->
 
 <!--//{ motor speed preintegration nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)motor_speed_preintegration" args="$(arg nodelet) maslo/MotorSpeedPreintegration $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_preintegration" args="$(arg nodelet) maslo/MotorSpeedPreintegration $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
@@ -60,7 +61,7 @@
         <param name="odometryFrame" type="string" value="$(arg frame_odom)" />
 
         <!-- subscribers -->
-        <remap from="~maslo/preintegration/motor_speeds_in" to="$(arg node_prefix)motor_speed_sync/motor_speeds" />
+        <remap from="~maslo/preintegration/motor_speeds_in" to="$(arg node_prefix)mas_topic_sync/motor_speeds" />
         <remap from="~maslo/preintegration/odom_mapping_incremental_in" to="$(arg node_prefix)maslo/mapping/odometry_incremental" />
         <remap from="~maslo/preintegration/odom_mapping_in" to="$(arg node_prefix)maslo/mapping/odometry" />
 
