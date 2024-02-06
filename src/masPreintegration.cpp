@@ -120,28 +120,28 @@ public:
     pl.loadParam("baselinkFrame", baselinkFrame);
     pl.loadParam("odometryFrame", odometryFrame);
 
-    pl.loadParam("mass/mass", mass);
-    pl.loadParam("mass/gravity", gravity);
-    pl.loadParam("mass/numMotors", numMotors);
-    pl.loadParam("mass/propMass", propMass);
-    pl.loadParam("mass/motorConstant", motorConstant);
-    pl.loadParam("mass/momentConstant", momentConstant);
+    pl.loadParam("mas/mass", mass);
+    pl.loadParam("mas/gravity", gravity);
+    pl.loadParam("mas/numMotors", numMotors);
+    pl.loadParam("mas/propMass", propMass);
+    pl.loadParam("mas/motorConstant", motorConstant);
+    pl.loadParam("mas/momentConstant", momentConstant);
 
-    pl.loadParam("mass/linAccBiasNoise", linAccBiasNoise);
-    pl.loadParam("mass/angAccBiasNoise", angAccBiasNoise);
+    pl.loadParam("mas/linAccBiasNoise", linAccBiasNoise);
+    pl.loadParam("mas/angAccBiasNoise", angAccBiasNoise);
 
-    pl.loadParam("mass/linAccNoise", linAccNoise);
-    pl.loadParam("mass/angAccNoise", angAccNoise);
+    pl.loadParam("mas/linAccNoise", linAccNoise);
+    pl.loadParam("mas/angAccNoise", angAccNoise);
 
     double init_bias_acc_lin_x, init_bias_acc_lin_y, init_bias_acc_lin_z;
-    pl.loadParam("mass/initBias/linear/x", init_bias_acc_lin_x);
-    pl.loadParam("mass/initBias/linear/y", init_bias_acc_lin_y);
-    pl.loadParam("mass/initBias/linear/z", init_bias_acc_lin_z);
+    pl.loadParam("mas/initBias/linear/x", init_bias_acc_lin_x);
+    pl.loadParam("mas/initBias/linear/y", init_bias_acc_lin_y);
+    pl.loadParam("mas/initBias/linear/z", init_bias_acc_lin_z);
 
     double init_bias_acc_ang_x, init_bias_acc_ang_y, init_bias_acc_ang_z;
-    pl.loadParam("mass/initBias/angular/x", init_bias_acc_ang_x);
-    pl.loadParam("mass/initBias/angular/y", init_bias_acc_ang_y);
-    pl.loadParam("mass/initBias/angular/z", init_bias_acc_ang_z);
+    pl.loadParam("mas/initBias/angular/x", init_bias_acc_ang_x);
+    pl.loadParam("mas/initBias/angular/y", init_bias_acc_ang_y);
+    pl.loadParam("mas/initBias/angular/z", init_bias_acc_ang_z);
 
     if (!pl.loadedSuccessfully()) {
       ROS_ERROR("[MasPreintegration]: Could not load all parameters!");
@@ -152,7 +152,7 @@ public:
     initBias_ = gtsam::mas_bias::ConstantBias((gtsam::Vector3() << init_bias_acc_lin_x, init_bias_acc_lin_y, init_bias_acc_lin_z).finished(),
                                               (gtsam::Vector3() << init_bias_acc_ang_x, init_bias_acc_ang_y, init_bias_acc_ang_z).finished());
 
-    subMas      = nh.subscribe<mrs_msgs::Float64ArrayStamped>("maslo/preintegration/mass_in", 10, &MasPreintegration::masHandler, this,
+    subMas      = nh.subscribe<mrs_msgs::Float64ArrayStamped>("maslo/preintegration/mas_in", 10, &MasPreintegration::masHandler, this,
                                                          ros::TransportHints().tcpNoDelay());
     subOdometry = nh.subscribe<nav_msgs::Odometry>("maslo/preintegration/odom_mapping_incremental_in", 5, &MasPreintegration::odometryHandler, this,
                                                    ros::TransportHints().tcpNoDelay());
@@ -371,8 +371,8 @@ public:
     // 1. integrate MAS data and optimize
     while (!masQueOpt.empty()) {
       // pop and integrate MAS data that is between two optimizations
-      const mrs_msgs::Float64ArrayStamped* thisMass = &masQueOpt.front();
-      const double                         masTime  = ROS_TIME(thisMass);
+      const mrs_msgs::Float64ArrayStamped* thisMas = &masQueOpt.front();
+      const double                         masTime  = ROS_TIME(thisMas);
       if (masTime < currentCorrectionTime - delta_t) {
         const double dt = (lastMasT_opt < 0) ? (1.0 / 500.0) : (masTime - lastMasT_opt);
 
@@ -382,9 +382,9 @@ public:
           continue;
         }
 
-        masIntegratorOpt_->integrateMeasurement(gtsam::Vector4(thisMass->values[0], thisMass->values[1], thisMass->values[2], thisMass->values[3]), dt);
-        ROS_INFO_THROTTLE(1.0, "[MasPreintegration]: motor speeds: %.2f %.2f %.2f %.2f dt: %.2f", thisMass->values[0], thisMass->values[1], thisMass->values[2],
-                          thisMass->values[3], dt);
+        masIntegratorOpt_->integrateMeasurement(gtsam::Vector4(thisMas->values[0], thisMas->values[1], thisMas->values[2], thisMas->values[3]), dt);
+        ROS_INFO_THROTTLE(1.0, "[MasPreintegration]: motor speeds: %.2f %.2f %.2f %.2f dt: %.2f", thisMas->values[0], thisMas->values[1], thisMas->values[2],
+                          thisMas->values[3], dt);
 
         lastMasT_opt = masTime;
         masQueOpt.pop_front();
@@ -403,10 +403,10 @@ public:
     ros::Time t_integrate = ros::Time::now();
 
     // add motor speed factor to graph
-    const gtsam::PreintegratedMasMeasurements& preint_mass = dynamic_cast<const gtsam::PreintegratedMasMeasurements&>(*masIntegratorOpt_);
-    const gtsam::MasFactor                     mas_factor(X(key - 1), V(key - 1), W(key - 1), X(key), V(key), W(key), B(key), preint_mass);
-    const gtsam::Vector3                       lin_acc_b = preint_mass.lastAcc();
-    const gtsam::Vector3                       ang_acc_b = preint_mass.lastAlpha();
+    const gtsam::PreintegratedMasMeasurements& preint_mas = dynamic_cast<const gtsam::PreintegratedMasMeasurements&>(*masIntegratorOpt_);
+    const gtsam::MasFactor                     mas_factor(X(key - 1), V(key - 1), W(key - 1), X(key), V(key), W(key), B(key), preint_mas);
+    const gtsam::Vector3                       lin_acc_b = preint_mas.lastAcc();
+    const gtsam::Vector3                       ang_acc_b = preint_mas.lastAlpha();
 
     graphFactors.add(mas_factor);
     // add MAS bias between factor
@@ -471,9 +471,9 @@ public:
       // integrate MAS message from the beginning of this optimization
       ros::Time ms_stamp;
       for (int i = 0; i < (int)masQuePre.size(); ++i) {
-        mrs_msgs::Float64ArrayStamped* thisMass = &masQuePre[i];
-        ms_stamp                                = thisMass->header.stamp;
-        const double masTime                    = ROS_TIME(thisMass);
+        mrs_msgs::Float64ArrayStamped* thisMas = &masQuePre[i];
+        ms_stamp                                = thisMas->header.stamp;
+        const double masTime                    = ROS_TIME(thisMas);
         const double dt                         = (lastMasQT < 0) ? (1.0 / 500.0) : (masTime - lastMasQT);
 
         if (dt <= 0) {
@@ -481,7 +481,7 @@ public:
           continue;
         }
 
-        masIntegratorPre_->integrateMeasurement(gtsam::Vector4(thisMass->values[0], thisMass->values[1], thisMass->values[2], thisMass->values[3]), dt);
+        masIntegratorPre_->integrateMeasurement(gtsam::Vector4(thisMas->values[0], thisMas->values[1], thisMas->values[2], thisMas->values[3]), dt);
         lastMasQT = masTime;
       }
 

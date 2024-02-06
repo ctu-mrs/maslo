@@ -6,8 +6,7 @@ downsampleRate: 1                           # default: 1. Downsample your data i
 lidarMinRange: 1.0                          # default: 1.0, minimum lidar range to be used
 lidarMaxRange: 30.0                        # default: 1000.0, maximum lidar range to be used
   
-motor_speeds:
-
+mas:
   mass: 3.2 # kg
   gravity: 9.8 # m*s^(-2)
   propMass: 0.005 # kg

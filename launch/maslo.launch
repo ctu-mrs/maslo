@@ -22,34 +22,10 @@
     <arg name="nodelet" default="standalone"/>
     <arg name="nodelet_manager" default=""/>
 
-    <!-- TODO move to HW API -->
-    <arg name="motor_slowdown_constant" default="0.0159236" />
-    <arg name="num_motors" default="4" />
-
     <group ns="$(arg UAV_NAME)">
 
-<!-- TODO move to HW API -->
-<!--//{ motor_speed_sync nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_topic_sync" args="$(arg nodelet) mas_topic_sync/MasTopicSync $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
-
-        <!-- parameters -->
-        <param name="uav_name" type="string" value="$(arg UAV_NAME)" />
-        <param name="is_simulation" type="bool" value="$(arg is_simulation)" />
-        <param name="motor_slowdown_constant" type="double" value="$(arg motor_slowdown_constant)" />
-        <param name="num_motors" type="int" value="$(arg num_motors)" />
-
-        <!-- subscribers -->
-        <remap from="~esc_status_in" to="mavros/esc_status" />
-
-        <!-- publishers -->
-        <remap from="~motor_speeds_sync_out" to="$(arg node_prefix)mas_topic_sync/motor_speeds" />
-
-
-      </node>
-<!--//}-->
-
 <!--//{ motor speed preintegration nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_preintegration" args="$(arg nodelet) maslo/MotorSpeedPreintegration $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_preintegration" args="$(arg nodelet) maslo/MasPreintegration $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
@@ -61,7 +37,7 @@
         <param name="odometryFrame" type="string" value="$(arg frame_odom)" />
 
         <!-- subscribers -->
-        <remap from="~maslo/preintegration/motor_speeds_in" to="$(arg node_prefix)mas_topic_sync/motor_speeds" />
+        <remap from="~maslo/preintegration/mas_in" to="motor_speeds_sync" />
         <remap from="~maslo/preintegration/odom_mapping_incremental_in" to="$(arg node_prefix)maslo/mapping/odometry_incremental" />
         <remap from="~maslo/preintegration/odom_mapping_in" to="$(arg node_prefix)maslo/mapping/odometry" />
 
