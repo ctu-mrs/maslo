@@ -27,3 +27,9 @@
     <description>TransformFusion nodelet</description>
   </class>
 </library>
+
+<library path="lib/libMasloMasTopicSync">
+  <class name="maslo/MasTopicSync" type="maslo::mas_topic_sync::MasTopicSync" base_class_type="nodelet::Nodelet">
+    <description>MasTopicSync nodelet</description>
+  </class>
+</library>

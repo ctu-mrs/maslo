@@ -1,0 +1,40 @@
+<launch>
+
+    <arg name="UAV_NAME" default="$(env UAV_NAME)" />
+    <arg name="RUN_TYPE" default="$(env RUN_TYPE)" />
+
+    <arg name="launch_delay" default="0" />
+    <arg name="launch_prefix" default="" />
+
+    <arg name="nodelet" default="standalone"/>
+    <arg name="nodelet_manager" default=""/>
+
+    <arg if="$(eval arg('RUN_TYPE') == 'simulation')" name="is_simulation" value="true" />
+    <arg if="$(eval arg('RUN_TYPE') == 'realworld')" name="is_simulation" value="false" />
+
+    <arg name="motor_slowdown_constant" default="1.0" />
+    <arg name="num_motors" default="4" />
+
+    <group ns="$(arg UAV_NAME)">
+
+<!--//{ motor_speed_sync nodelet -->
+      <node pkg="nodelet" type="nodelet" name="mas_topic_sync" args="$(arg nodelet) maslo/MasTopicSync $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+
+        <!-- parameters -->
+        <param name="uav_name" type="string" value="$(arg UAV_NAME)" />
+        <param name="is_simulation" type="bool" value="$(arg is_simulation)" />
+        <param name="motor_slowdown_constant" type="double" value="$(arg motor_slowdown_constant)" />
+        <param name="num_motors" type="int" value="$(arg num_motors)" />
+
+        <!-- subscribers -->
+        <remap from="~esc_status_in" to="mavros/esc_status" />
+
+        <!-- publishers -->
+        <remap from="~motor_speeds_sync_out" to="motor_speeds_sync" />
+
+
+      </node>
+<!--//}-->
+
+    </group>
+</launch>

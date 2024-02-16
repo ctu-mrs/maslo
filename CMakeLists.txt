@@ -70,6 +70,7 @@ set(LIBRARIES
   MasloFeatureExtraction
   MasloImageProjection
   MasloTransformFusion
+  MasloMasTopicSync
   )
 
 # add definitions
@@ -165,5 +166,15 @@ add_dependencies(MasloTransformFusion
   ${catkin_EXPORTED_TARGETS}
   )
 target_link_libraries(MasloTransformFusion
+  ${catkin_LIBRARIES}
+  )
+
+# Mas Topic Sync
+add_library(MasloMasTopicSync src/masTopicSync.cpp)
+add_dependencies(MasloMasTopicSync
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+  )
+target_link_libraries(MasloMasTopicSync
   ${catkin_LIBRARIES}
   )

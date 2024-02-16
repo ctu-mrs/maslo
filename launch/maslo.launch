@@ -2,7 +2,6 @@
 
     <!-- ENV VARS -->
     <arg name="UAV_NAME" default="$(env UAV_NAME)"/>
-    <arg name="UAV_TYPE" default="$(env UAV_TYPE)" />
     <arg name="RUN_TYPE" default="$(env RUN_TYPE)" />
 
     <arg name="node_prefix" default=""/>
@@ -39,10 +38,13 @@
         <!-- subscribers -->
         <remap from="~maslo/preintegration/mas_in" to="motor_speeds_sync" />
         <remap from="~maslo/preintegration/odom_mapping_incremental_in" to="$(arg node_prefix)maslo/mapping/odometry_incremental" />
-        <remap from="~maslo/preintegration/odom_mapping_in" to="$(arg node_prefix)maslo/mapping/odometry" />
 
         <!-- publishers -->
         <remap from="~maslo/preintegration/odom_preintegrated_out" to="$(arg node_prefix)maslo/preintegration/odometry" />
+      <remap from="~maslo/preintegration/lin_acc_out" to="$(arg node_prefix)maslo/preintegration/lin_acc" />
+      <remap from="~maslo/preintegration/ang_vel_out" to="$(arg node_prefix)maslo/preintegration/ang_vel" />
+      <remap from="~maslo/preintegration/lin_acc_bias_out" to="$(arg node_prefix)maslo/preintegration/lin_acc_bias" />
+      <remap from="~maslo/preintegration/ang_vel_bias_out" to="$(arg node_prefix)maslo/preintegration/ang_vel_bias" />
 
 
       </node>
