@@ -125,8 +125,6 @@ void findLidar2BaselinkTf(const string &lidarFrame, const string &baselinkFrame,
   }
   /*//}*/
 
-  /*//}*/
-
   ROS_INFO("Transform from: %s, to: %s.", lidarFrame.c_str(), baselinkFrame.c_str());
   ROS_INFO("   xyz: (%0.1f, %0.1f, %0.1f); xyzq: (%0.1f, %0.1f, %0.1f, %0.1f)", tfLidar2Baselink.getOrigin().x(), tfLidar2Baselink.getOrigin().y(),
            tfLidar2Baselink.getOrigin().z(), tfLidar2Baselink.getRotation().x(), tfLidar2Baselink.getRotation().y(), tfLidar2Baselink.getRotation().z(),

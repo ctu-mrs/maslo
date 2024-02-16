@@ -195,17 +195,17 @@ public:
       bool tfFound = false;
       while (!tfFound) {
         try {
-          ROS_WARN_THROTTLE(3.0, "[TransformFusion]: Waiting for transform from: %s, to: %s.", baselinkFrame.c_str(), lidarFrame.c_str());
+          ROS_WARN_THROTTLE(3.0, "[MasPreintegration]: Waiting for transform from: %s, to: %s.", baselinkFrame.c_str(), lidarFrame.c_str());
           tfListener.waitForTransform(baselinkFrame, lidarFrame, ros::Time(0), ros::Duration(3.0));
           tfListener.lookupTransform(baselinkFrame, lidarFrame, ros::Time(0), tfBaselink2Lidar);
           tfFound = true;
         }
         catch (tf::TransformException ex) {
-          ROS_WARN_THROTTLE(3.0, "[TransformFusion]: could not find transform from: %s, to: %s.", baselinkFrame.c_str(), lidarFrame.c_str());
+          ROS_WARN_THROTTLE(3.0, "[MasPreintegration]: could not find transform from: %s, to: %s.", baselinkFrame.c_str(), lidarFrame.c_str());
         }
       }
 
-      ROS_INFO("[TransformFusion]: Found transform from: %s, to: %s.", baselinkFrame.c_str(), lidarFrame.c_str());
+      ROS_INFO("[MasPreintegration]: Found transform from: %s, to: %s.", baselinkFrame.c_str(), lidarFrame.c_str());
 
     } else {
       tfBaselink2Lidar.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
@@ -467,7 +467,7 @@ public:
     // repropogate
     if (!masQuePre.empty()) {
       // reset bias use the newly optimized bias
-      masIntegratorPre_->resetIntegration();
+      masIntegratorPre_->resetIntegration(); // TODO why not set bias here?
       // integrate MAS message from the beginning of this optimization
       ros::Time ms_stamp;
       for (int i = 0; i < (int)masQuePre.size(); ++i) {

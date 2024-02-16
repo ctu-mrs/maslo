@@ -64,6 +64,14 @@ catkin_package(
   mrs_msgs
 )
 
+set(LIBRARIES
+  MasloImuPreintegration
+  MasloMapOptimization
+  MasloFeatureExtraction
+  MasloImageProjection
+  MasloTransformFusion
+  )
+
 # add definitions
 add_definitions(
     ${PCL_DEFINITIONS}
@@ -92,42 +100,42 @@ link_directories(
 ###########
 
 # Range Image Projection
-add_library(ImageProjection src/imageProjection.cpp)
-add_dependencies(ImageProjection
+add_library(MasloImageProjection src/imageProjection.cpp)
+add_dependencies(MasloImageProjection
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   )
-target_link_libraries(ImageProjection
+target_link_libraries(MasloImageProjection
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
   ${PCL_LIBRARIES}
   )
 
 # Feature Association
-add_library(FeatureExtraction src/featureExtraction.cpp)
-add_dependencies(FeatureExtraction
+add_library(MasloFeatureExtraction src/featureExtraction.cpp)
+add_dependencies(MasloFeatureExtraction
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   )
-target_link_libraries(FeatureExtraction
+target_link_libraries(MasloFeatureExtraction
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
   )
 
 # Mapping Optimization
-add_library(MapOptimization src/mapOptimization.cpp)
-add_dependencies(MapOptimization
+add_library(MasloMapOptimization src/mapOptimization.cpp)
+add_dependencies(MasloMapOptimization
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   )
-target_compile_options(MapOptimization
+target_compile_options(MasloMapOptimization
   PRIVATE
   ${OpenMP_CXX_FLAGS}
   )
-target_link_libraries(MapOptimization
+target_link_libraries(MasloMapOptimization
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
   ${OpenCV_LIBRARIES}
@@ -137,13 +145,13 @@ target_link_libraries(MapOptimization
   )
 
 # Mas Preintegration
-add_library(MasPreintegration src/masPreintegration.cpp)
-add_dependencies(MasPreintegration
+add_library(MasloMasPreintegration src/masPreintegration.cpp)
+add_dependencies(MasloMasPreintegration
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${PROJECT_NAME}_generate_messages_cpp
   )
-target_link_libraries(MasPreintegration
+target_link_libraries(MasloMasPreintegration
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   ${GTSAM_LIBRARIES}
@@ -151,11 +159,11 @@ target_link_libraries(MasPreintegration
   )
 
 # Transform Fusion
-add_library(TransformFusion src/transformFusion.cpp)
-add_dependencies(TransformFusion
+add_library(MasloTransformFusion src/transformFusion.cpp)
+add_dependencies(MasloTransformFusion
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   )
-target_link_libraries(TransformFusion
+target_link_libraries(MasloTransformFusion
   ${catkin_LIBRARIES}
   )
