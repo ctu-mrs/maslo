@@ -25,7 +25,7 @@
     <group ns="$(arg UAV_NAME)">
 
 <!--//{ motor speed preintegration nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_preintegration" args="$(arg nodelet) maslo/MasloMasPreintegration $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)mas_preintegration" args="$(arg nodelet) maslo/MasPreintegration $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
@@ -49,7 +49,7 @@
 <!--//}-->
 
 <!--//{ transform fusion nodelet -->
-       <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)transform_fusion" args="$(arg nodelet) maslo/MasloTransformFusion $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)"> 
+       <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)transform_fusion" args="$(arg nodelet) maslo/TransformFusion $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)"> 
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
@@ -73,7 +73,7 @@
 <!-- //} -->
 
 <!--//{ image_projection nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)image_projection" args="$(arg nodelet) maslo/MasloImageProjection $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)image_projection" args="$(arg nodelet) maslo/ImageProjection $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
@@ -95,7 +95,7 @@
 <!--//}-->
 
 <!--//{ feature extraction nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)feature_extraction" args="$(arg nodelet) maslo/MasloFeatureExtraction $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)feature_extraction" args="$(arg nodelet) maslo/FeatureExtraction $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
@@ -116,7 +116,7 @@
 <!--//}-->
 
 <!--//{ map_optimization nodelet -->
-      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)map_optimization" args="$(arg nodelet) maslo/MasloMapOptimization $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
+      <node pkg="nodelet" type="nodelet" name="$(arg node_prefix)map_optimization" args="$(arg nodelet) maslo/MapOptimization $(arg nodelet_manager)" output="screen" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'; $(arg launch_prefix)">
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
