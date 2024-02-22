@@ -5,6 +5,7 @@
     <arg name="RUN_TYPE" default="$(env RUN_TYPE)" />
 
     <arg name="node_prefix" default=""/>
+    <arg name="custom_config" default=""/>
 
     <arg if="$(eval arg('RUN_TYPE') == 'simulation')" name="is_simulation" value="true" />
     <arg if="$(eval arg('RUN_TYPE') == 'realworld')" name="is_simulation" value="false" />
@@ -28,6 +29,7 @@
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
+        <rosparam if="$(eval not arg('custom_config') == '')" file="$(arg custom_config)" command="load" />
 
         <!-- parameters -->
         <param name="uavName" type="string" value="$(arg UAV_NAME)" />
@@ -55,6 +57,7 @@
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
+        <rosparam if="$(eval not arg('custom_config') == '')" file="$(arg custom_config)" command="load" />
 
         <!-- parameters -->
         <param name="uavName" type="string" value="$(arg UAV_NAME)" /> 
@@ -79,6 +82,7 @@
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
+        <rosparam if="$(eval not arg('custom_config') == '')" file="$(arg custom_config)" command="load" />
 
         <!-- parameters -->
         <param name="uavName" type="string" value="$(arg UAV_NAME)" />
@@ -101,6 +105,7 @@
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
+        <rosparam if="$(eval not arg('custom_config') == '')" file="$(arg custom_config)" command="load" />
 
         <!-- parameters -->
         <param name="uavName" type="string" value="$(arg UAV_NAME)" />
@@ -122,6 +127,7 @@
 
         <!-- config file --> 
         <rosparam file="$(arg config_file)" command="load" />
+        <rosparam if="$(eval not arg('custom_config') == '')" file="$(arg custom_config)" command="load" />
 
         <!-- parameters -->
         <param name="uavName" type="string" value="$(arg UAV_NAME)" />
