@@ -12,7 +12,8 @@
     <arg if="$(eval arg('RUN_TYPE') == 'simulation')" name="is_simulation" value="true" />
     <arg if="$(eval arg('RUN_TYPE') == 'realworld')" name="is_simulation" value="false" />
 
-    <arg name="motor_slowdown_constant" default="1.0" />
+    <arg if="$(eval arg('RUN_TYPE') == 'simulation')" name="motor_slowdown_constant" value="0.0159236" />
+    <arg if="$(eval arg('RUN_TYPE') == 'realworld')" name="motor_slowdown_constant" value="1.0" />
     <arg name="num_motors" default="4" />
 
     <group ns="$(arg UAV_NAME)">

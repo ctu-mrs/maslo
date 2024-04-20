@@ -146,6 +146,7 @@ public:
 
   geometry_msgs::QuaternionStamped orientationMsg;
   bool                             gotOrientation = false;
+  bool                             useOrientation = false;
 
   vector<pcl::PointCloud<PointType>::Ptr> cornerCloudKeyFrames;
   vector<pcl::PointCloud<PointType>::Ptr> surfCloudKeyFrames;
@@ -421,7 +422,7 @@ public:
       return;
     }
 
-    if (!gotOrientation) {
+    if (useOrientation && !gotOrientation) {
       ROS_INFO_THROTTLE(1.0, "[MapOptimization]: waiting for orientation");
       return;
     }
@@ -435,6 +436,11 @@ public:
     cloudInfo = *msgIn;
     pcl::fromROSMsg(msgIn->cloud_corner, *laserCloudCornerLast);
     pcl::fromROSMsg(msgIn->cloud_surface, *laserCloudSurfLast);
+
+    if (laserCloudCornerLast->size() <= 3 || laserCloudSurfLast->size() <= 3) {
+      ROS_WARN("[MapOptimization]: not enough features in input cloud: corn: %lu surf: %lu", laserCloudCornerLast->size(), laserCloudSurfLast->size());
+      return;
+    }
 
     std::lock_guard<std::mutex> lock(mtx);
 

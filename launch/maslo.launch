@@ -42,7 +42,7 @@
         <remap from="~maslo/preintegration/odom_mapping_incremental_in" to="$(arg node_prefix)maslo/mapping/odometry_incremental" />
 
         <!-- publishers -->
-        <remap from="~maslo/preintegration/odom_preintegrated_out" to="$(arg node_prefix)maslo/preintegration/odometry" />
+      <remap from="~maslo/preintegration/odom_preintegrated_out" to="$(arg node_prefix)maslo/preintegration/odometry" />
       <remap from="~maslo/preintegration/lin_acc_out" to="$(arg node_prefix)maslo/preintegration/lin_acc" />
       <remap from="~maslo/preintegration/ang_vel_out" to="$(arg node_prefix)maslo/preintegration/ang_vel" />
       <remap from="~maslo/preintegration/lin_acc_bias_out" to="$(arg node_prefix)maslo/preintegration/lin_acc_bias" />
