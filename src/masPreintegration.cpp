@@ -45,6 +45,10 @@ public:
   float propMass;
   float motorConstant;
   float momentConstant;
+  float torqueThrustConstant;
+  float bodyRadius;
+  float bodyHeight;
+  float rotorXYOffset;
   float linAccNoise;
   float angAccNoise;
   float linAccBiasNoise;
@@ -126,6 +130,10 @@ public:
     pl.loadParam("mas/propMass", propMass);
     pl.loadParam("mas/motorConstant", motorConstant);
     pl.loadParam("mas/momentConstant", momentConstant);
+    pl.loadParam("mas/torqueThrustConstant", torqueThrustConstant);
+    pl.loadParam("mas/bodyRadius", bodyRadius);
+    pl.loadParam("mas/bodyHeight", bodyHeight);
+    pl.loadParam("mas/rotorXYOffset", rotorXYOffset);
 
     pl.loadParam("mas/linAccBiasNoise", linAccBiasNoise);
     pl.loadParam("mas/angAccBiasNoise", angAccBiasNoise);
@@ -167,7 +175,11 @@ public:
     p->setMass(mass + (float)numMotors * propMass);
     p->setMotorConstant(motorConstant);
     p->setMomentConstant(momentConstant);
+    p->setTorqueThrustConstant(torqueThrustConstant);
     p->setNumRotors(numMotors);
+    p->setBodyRadius(bodyRadius);
+    p->setBodyHeight(bodyHeight);
+    p->setRotorXYOffset(rotorXYOffset);
     p->setRotorDirs(std::vector<int>{-1, -1, 1, 1});
     p->setAccelerationCovariance(gtsam::Matrix33::Identity(3, 3) * pow(linAccNoise, 2));              // acc white noise in continuous
     p->setAlphaCovariance(gtsam::Matrix33::Identity(3, 3) * pow(angAccNoise, 2));                     // acc white noise in continuous
@@ -368,6 +380,11 @@ public:
     ros::Time t_reset           = ros::Time::now();
     bool      is_mas_integrated = false;
 
+    if (masQueOpt.empty()) {
+      /* ROS_WARN_THROTTLE(1.0, "[MasPreintegration]: masQueOpt empty"); */
+      return;
+    }
+
     // 1. integrate MAS data and optimize
     while (!masQueOpt.empty()) {
       // pop and integrate MAS data that is between two optimizations
@@ -391,6 +408,7 @@ public:
         is_mas_integrated = true;
 
       } else {
+        /* ROS_WARN_THROTTLE(1.0, "[MasPreintegration]: masTime: %.4f currentCorrectionTime - delta_t: %.4f", masTime, currentCorrectionTime - delta_t); */
         break;
       }
     }
@@ -467,7 +485,7 @@ public:
     // repropogate
     if (!masQuePre.empty()) {
       // reset bias use the newly optimized bias
-      masIntegratorPre_->resetIntegration(); // TODO why not set bias here?
+      masIntegratorPre_->resetIntegrationAndSetBias(prevBias_); // TODO why not set bias here?
       // integrate MAS message from the beginning of this optimization
       ros::Time ms_stamp;
       for (int i = 0; i < (int)masQuePre.size(); ++i) {
@@ -597,12 +615,13 @@ public:
     odometry->pose.pose.orientation.z = lidarPose.rotation().toQuaternion().z();
     odometry->pose.pose.orientation.w = lidarPose.rotation().toQuaternion().w();
 
-    odometry->twist.twist.linear.x  = currentState.linVelocity().x();
-    odometry->twist.twist.linear.y  = currentState.linVelocity().y();
-    odometry->twist.twist.linear.z  = currentState.linVelocity().z();
-    odometry->twist.twist.angular.x = currentState.angVelocity().x();
-    odometry->twist.twist.angular.y = currentState.angVelocity().y();
-    odometry->twist.twist.angular.z = currentState.angVelocity().z();
+    // NOTE petrlmat: bodyLinVelocity()?
+    odometry->twist.twist.linear.x  = currentState.bodyLinVelocity().x();
+    odometry->twist.twist.linear.y  = currentState.bodyLinVelocity().y();
+    odometry->twist.twist.linear.z  = currentState.bodyLinVelocity().z();
+    odometry->twist.twist.angular.x = currentState.bodyAngVelocity().x();
+    odometry->twist.twist.angular.y = currentState.bodyAngVelocity().y();
+    odometry->twist.twist.angular.z = currentState.bodyAngVelocity().z();
     pubPreOdometry.publish(odometry);
   }
   /*//}*/
