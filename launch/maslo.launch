@@ -44,9 +44,9 @@
         <!-- publishers -->
       <remap from="~maslo/preintegration/odom_preintegrated_out" to="$(arg node_prefix)maslo/preintegration/odometry" />
       <remap from="~maslo/preintegration/lin_acc_out" to="$(arg node_prefix)maslo/preintegration/lin_acc" />
-      <remap from="~maslo/preintegration/ang_vel_out" to="$(arg node_prefix)maslo/preintegration/ang_vel" />
+      <remap from="~maslo/preintegration/ang_acc_out" to="$(arg node_prefix)maslo/preintegration/ang_acc" />
       <remap from="~maslo/preintegration/lin_acc_bias_out" to="$(arg node_prefix)maslo/preintegration/lin_acc_bias" />
-      <remap from="~maslo/preintegration/ang_vel_bias_out" to="$(arg node_prefix)maslo/preintegration/ang_vel_bias" />
+      <remap from="~maslo/preintegration/ang_acc_bias_out" to="$(arg node_prefix)maslo/preintegration/ang_acc_bias" />
 
 
       </node>
