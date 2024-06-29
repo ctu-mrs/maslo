@@ -1,5 +1,9 @@
 #include "utility.h"
 
+#include <chrono>
+
+#include <mrs_msgs/Float64Stamped.h>
+
 #include <gtsam/geometry/Rot3.h>
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/slam/PriorFactor.h>
@@ -65,6 +69,7 @@ public:
   ros::Publisher  pubLinAccBias;
   ros::Publisher  pubAngAcc;
   ros::Publisher  pubAngAccBias;
+  ros::Publisher  pubPreDuration;
 
   bool systemInitialized = false;
 
@@ -170,6 +175,7 @@ public:
     pubAngAcc      = nh.advertise<geometry_msgs::Vector3Stamped>("maslo/preintegration/ang_acc_out", 10);
     pubLinAccBias  = nh.advertise<geometry_msgs::Vector3Stamped>("maslo/preintegration/lin_acc_bias_out", 10);
     pubAngAccBias  = nh.advertise<geometry_msgs::Vector3Stamped>("maslo/preintegration/ang_acc_bias_out", 10);
+    pubPreDuration = nh.advertise<mrs_msgs::Float64Stamped>("maslo/preintegration/duration_out", 10);
 
     boost::shared_ptr<gtsam::MasParams> p = gtsam::MasParams::MakeSharedU(gravity);
     p->setMass(mass + (float)numMotors * propMass);
@@ -592,7 +598,9 @@ public:
     lastMasT_predict = masTime;
 
     // integrate this single MAS message
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     masIntegratorPre_->integrateMeasurement(gtsam::Vector4(msg_in->values[0], msg_in->values[1], msg_in->values[2], msg_in->values[3]), dt);
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     // predict odometry
     const gtsam::FullState currentState = masIntegratorPre_->predict(prevStateOdom, prevBias_);
@@ -623,6 +631,13 @@ public:
     odometry->twist.twist.angular.y = currentState.bodyAngVelocity().y();
     odometry->twist.twist.angular.z = currentState.bodyAngVelocity().z();
     pubPreOdometry.publish(odometry);
+
+    double t_dur = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+    mrs_msgs::Float64Stamped t_dur_msg;
+    t_dur_msg.header.stamp = ros::Time::now();
+    t_dur_msg.header.frame_id = "mas_preintegrate_duration";
+    t_dur_msg.value = t_dur;
+    pubPreDuration.publish(t_dur_msg);
   }
   /*//}*/
 };
