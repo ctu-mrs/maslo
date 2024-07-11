@@ -491,7 +491,7 @@ public:
     // repropogate
     if (!masQuePre.empty()) {
       // reset bias use the newly optimized bias
-      masIntegratorPre_->resetIntegrationAndSetBias(prevBias_); // TODO why not set bias here?
+      masIntegratorPre_->resetIntegrationAndSetBias(prevBias_); 
       // integrate MAS message from the beginning of this optimization
       ros::Time ms_stamp;
       for (int i = 0; i < (int)masQuePre.size(); ++i) {
@@ -510,42 +510,7 @@ public:
       }
 
       /* ROS_INFO("[MasPreintegration]: motor speed integration delay: %.4f", (ros::Time::now() - ms_stamp).toSec()); */
-
-      const gtsam::Vector3          lin_acc_b = masIntegratorPre_->lastAcc();
-      const gtsam::Vector3          ang_acc_b = masIntegratorPre_->lastAlpha();
-      geometry_msgs::Vector3Stamped lin_acc_msg;
-      gtsam::Vector3                lin_acc_w = prevPose_.rotation() * lin_acc_b;
-      lin_acc_msg.header.stamp                = ros::Time::now();
-      lin_acc_msg.header.frame_id             = "fcu";
-      lin_acc_msg.vector.x                    = lin_acc_w[0];
-      lin_acc_msg.vector.y                    = lin_acc_w[1];
-      lin_acc_msg.vector.z                    = lin_acc_w[2];
-      pubLinAcc.publish(lin_acc_msg);
-
-      geometry_msgs::Vector3Stamped ang_acc_msg;
-      ang_acc_msg.header.stamp    = ros::Time::now();
-      ang_acc_msg.header.frame_id = "fcu";
-      ang_acc_msg.vector.x        = ang_acc_b[0];
-      ang_acc_msg.vector.y        = ang_acc_b[1];
-      ang_acc_msg.vector.z        = ang_acc_b[2];
-      pubAngAcc.publish(ang_acc_msg);
     }
-
-    geometry_msgs::Vector3Stamped lin_acc_bias_msg;
-    lin_acc_bias_msg.header.stamp    = ros::Time::now();
-    lin_acc_bias_msg.header.frame_id = "fcu";
-    lin_acc_bias_msg.vector.x        = prevBias_.linAcc()[0];
-    lin_acc_bias_msg.vector.y        = prevBias_.linAcc()[1];
-    lin_acc_bias_msg.vector.z        = prevBias_.linAcc()[2];
-    pubLinAccBias.publish(lin_acc_bias_msg);
-
-    geometry_msgs::Vector3Stamped ang_acc_bias_msg;
-    ang_acc_bias_msg.header.stamp    = ros::Time::now();
-    ang_acc_bias_msg.header.frame_id = "fcu";
-    ang_acc_bias_msg.vector.x        = prevBias_.angAcc()[0];
-    ang_acc_bias_msg.vector.y        = prevBias_.angAcc()[1];
-    ang_acc_bias_msg.vector.z        = prevBias_.angAcc()[2];
-    pubAngAccBias.publish(ang_acc_bias_msg);
 
     ++key;
     doneFirstOpt = true;
@@ -631,6 +596,44 @@ public:
     odometry->twist.twist.angular.y = currentState.bodyAngVelocity().y();
     odometry->twist.twist.angular.z = currentState.bodyAngVelocity().z();
     pubPreOdometry.publish(odometry);
+
+    const gtsam::Vector3          lin_acc_b = masIntegratorPre_->lastAcc();
+    const gtsam::Vector3          ang_acc_b = masIntegratorPre_->lastAlpha();
+    geometry_msgs::Vector3Stamped lin_acc_msg;
+    gtsam::Vector3                lin_acc_w = prevPose_.rotation() * lin_acc_b;
+    lin_acc_msg.header.stamp                = msg_in->header.stamp;
+    lin_acc_msg.header.frame_id             = "world";
+    lin_acc_msg.vector.x                    = lin_acc_w[0];
+    lin_acc_msg.vector.y                    = lin_acc_w[1];
+    lin_acc_msg.vector.z                    = lin_acc_w[2];
+    pubLinAcc.publish(lin_acc_msg);
+
+    geometry_msgs::Vector3Stamped ang_acc_msg;
+    ang_acc_msg.header.stamp    = msg_in->header.stamp;
+    ang_acc_msg.header.frame_id = "fcu";
+    ang_acc_msg.vector.x        = ang_acc_b[0];
+    ang_acc_msg.vector.y        = ang_acc_b[1];
+    ang_acc_msg.vector.z        = ang_acc_b[2];
+    pubAngAcc.publish(ang_acc_msg);
+
+    const gtsam::Vector3          lin_acc_bias_b = prevBias_.linAcc();
+    gtsam::Vector3                lin_acc_bias_w = prevPose_.rotation() * lin_acc_bias_b;
+    geometry_msgs::Vector3Stamped lin_acc_bias_msg;
+    lin_acc_bias_msg.header.stamp    = msg_in->header.stamp;
+    lin_acc_bias_msg.header.frame_id = "world";
+    lin_acc_bias_msg.vector.x        = lin_acc_bias_w[0];
+    lin_acc_bias_msg.vector.y        = lin_acc_bias_w[1];
+    lin_acc_bias_msg.vector.z        = lin_acc_bias_w[2];
+    pubLinAccBias.publish(lin_acc_bias_msg);
+
+    geometry_msgs::Vector3Stamped ang_acc_bias_msg;
+    ang_acc_bias_msg.header.stamp    = msg_in->header.stamp;
+    ang_acc_bias_msg.header.frame_id = "fcu";
+    ang_acc_bias_msg.vector.x        = prevBias_.angAcc()[0];
+    ang_acc_bias_msg.vector.y        = prevBias_.angAcc()[1];
+    ang_acc_bias_msg.vector.z        = prevBias_.angAcc()[2];
+    pubAngAccBias.publish(ang_acc_bias_msg);
+
 
     double t_dur = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
     mrs_msgs::Float64Stamped t_dur_msg;
