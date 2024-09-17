@@ -4,7 +4,7 @@ This repository contains the public open-source implementation of the MAS-LO alg
 The implementation is developed for ROS1 Noetic and Ubuntu 20.04.
 If you use our work please cite the publication.
 
-[](.fig/maslo_pipeline.png)
+![](.fig/maslo_pipeline.png)
 
 ## Publication
 
