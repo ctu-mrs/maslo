@@ -2,7 +2,8 @@
 
 This repository contains the public open-source implementation of the MAS-LO algorithm proposed in our T-RO publication [1].
 The implementation is developed for ROS1 Noetic and Ubuntu 20.04 and depends on the preintegrated [MAS Factor](https://github.com/ctu-mrs/mas_factor) and [GTSAM](https://github.com/borglab/gtsam) fractor graph optimization framework.
-If you use our work please cite the publication.
+
+*If you use our work please cite our publication [1].*
 
 ![](.fig/maslo_pipeline.png)
 
