@@ -1,0 +1,158 @@
+<launch>
+
+    <!-- ENV VARS -->
+    <arg name="UAV_NAME" default="uav25"/>
+
+    <arg  name="config_file" value="$(find maslo)/config/realworld.yaml" />
+
+    <arg name="frame_baselink" default="$(arg UAV_NAME)/fcu" />
+    <arg name="frame_lidar" default="$(arg UAV_NAME)/os_sensor" />
+    <arg name="frame_odom" default="$(arg UAV_NAME)/slam_origin" />
+    <arg name="frame_map" default="$(arg UAV_NAME)/slam_mapping_origin" />
+
+<!--//{ motor speed synchronization nodelet -->
+      <node pkg="nodelet" type="nodelet" name="mas_topic_sync" args="standalone maslo/MasTopicSync " output="screen">
+
+        <!-- parameters -->
+        <param name="uav_name" type="string" value="$(arg UAV_NAME)" />
+        <param name="is_simulation" type="bool" value="false" />
+        <param name="motor_slowdown_constant" type="double" value="1.0" />
+        <param name="num_motors" type="int" value="4" />
+
+        <!-- subscribers -->
+        <remap from="~esc_status_in" to="/pixhawk_esc_status" />
+
+        <!-- publishers -->
+        <remap from="~motor_speeds_sync_out" to="/mas_sync" />
+
+      </node>
+<!--//}-->
+
+<!--//{ motor speed preintegration nodelet -->
+      <node pkg="nodelet" type="nodelet" name="mas_preintegration" args="standalone maslo/MasPreintegration" output="screen">
+
+        <!-- config file --> 
+        <rosparam file="$(arg config_file)" command="load" />
+
+        <!-- parameters -->
+        <param name="uavName" type="string" value="$(arg UAV_NAME)" />
+        <param name="lidarFrame" type="string" value="$(arg frame_lidar)" />
+        <param name="baselinkFrame" type="string" value="$(arg frame_baselink)" />
+        <param name="odometryFrame" type="string" value="$(arg frame_odom)" />
+
+        <!-- subscribers -->
+        <remap from="~maslo/preintegration/mas_in" to="/mas_sync" />
+        <remap from="~maslo/preintegration/odom_mapping_incremental_in" to="/maslo/mapping/odometry_incremental" />
+
+        <!-- publishers -->
+        <remap from="~maslo/preintegration/odom_preintegrated_out" to="/maslo/preintegration/odometry" />
+        <remap from="~maslo/preintegration/lin_acc_out" to="/maslo/preintegration/lin_acc" />
+        <remap from="~maslo/preintegration/ang_acc_out" to="/maslo/preintegration/ang_acc" />
+        <remap from="~maslo/preintegration/lin_acc_bias_out" to="/maslo/preintegration/lin_acc_bias" />
+        <remap from="~maslo/preintegration/ang_acc_bias_out" to="/maslo/preintegration/ang_acc_bias" />
+
+
+      </node>
+<!--//}-->
+
+<!--//{ transform fusion nodelet -->
+       <node pkg="nodelet" type="nodelet" name="transform_fusion" args="standalone maslo/TransformFusion" output="screen"> 
+
+        <!-- config file --> 
+        <rosparam file="$(arg config_file)" command="load" />
+
+        <!-- parameters -->
+        <param name="uavName" type="string" value="$(arg UAV_NAME)" /> 
+        <param name="lidarFrame" type="string" value="$(arg frame_lidar)" />
+        <param name="baselinkFrame" type="string" value="$(arg frame_baselink)" />
+        <param name="odometryFrame" type="string" value="$(arg frame_odom)" />
+        <param name="mapFrame" type="string" value="$(arg frame_map)" />
+
+        <!-- publishers --> 
+        <remap from="~fused_odometry_out" to="/maslo/fusion/odometry" /> 
+        <remap from="~fused_path_out" to="/maslo/fusion/path" /> 
+
+        <!-- subscribers --> 
+        <remap from="~odom_pre_incremental_in" to="/maslo/preintegration/odometry" /> 
+        <remap from="~odom_mapping_in" to="/maslo/mapping/odometry" /> 
+
+       </node> 
+<!-- //} -->
+
+<!--//{ image_projection nodelet -->
+      <node pkg="nodelet" type="nodelet" name="image_projection" args="standalone maslo/ImageProjection" output="screen">
+
+        <!-- config file --> 
+        <rosparam file="$(arg config_file)" command="load" />
+
+        <!-- parameters -->
+        <param name="uavName" type="string" value="$(arg UAV_NAME)" />
+        <param name="lidarFrame" type="string" value="$(arg frame_lidar)" />
+        <param name="baselinkFrame" type="string" value="$(arg frame_baselink)" />
+
+        <!-- subscribers -->
+        <remap from="~odom_incremental_in" to="/maslo/odometry/preintegrated" />
+        <remap from="~cloud_in" to="/os_points_processed" />
+
+        <!-- publishers -->
+        <remap from="~maslo/deskew/deskewed_cloud_out" to="/maslo/deskew/deskewed_cloud" />
+        <remap from="~maslo/deskew/deskewed_cloud_info_out" to="/maslo/deskew/deskewed_cloud_info" />
+
+      </node>
+<!--//}-->
+
+<!--//{ feature extraction nodelet -->
+      <node pkg="nodelet" type="nodelet" name="feature_extraction" args="standalone maslo/FeatureExtraction" output="screen">
+
+        <!-- config file --> 
+        <rosparam file="$(arg config_file)" command="load" />
+
+        <!-- parameters -->
+        <param name="uavName" type="string" value="$(arg UAV_NAME)" />
+        <param name="lidarFrame" type="string" value="$(arg frame_lidar)" />
+
+        <!-- subscribers -->
+        <remap from="~maslo/feature/deskewed_cloud_info_in" to="/maslo/deskew/deskewed_cloud_info" />
+
+        <!-- publishers -->
+        <remap from="~maslo/feature/cloud_info_out" to="/maslo/feature/cloud_info" />
+        <remap from="~maslo/feature/cloud_corner_out" to="/maslo/feature/cloud_corner" />
+        <remap from="~maslo/feature/cloud_surface_out" to="/maslo/feature/cloud_surface" />
+
+      </node>
+<!--//}-->
+
+<!--//{ map_optimization nodelet -->
+      <node pkg="nodelet" type="nodelet" name="map_optimization" args="standalone maslo/MapOptimization" output="screen">
+
+        <!-- config file --> 
+        <rosparam file="$(arg config_file)" command="load" />
+
+        <!-- parameters -->
+        <param name="uavName" type="string" value="$(arg UAV_NAME)" />
+        <param name="lidarFrame" type="string" value="$(arg frame_lidar)" />
+        <param name="baselinkFrame" type="string" value="$(arg frame_baselink)" />
+        <param name="odometryFrame" type="string" value="$(arg frame_odom)" />
+
+        <!-- subscribers -->
+        <remap from="~maslo/mapping/cloud_info_in" to="/maslo/feature/cloud_info" />
+        <remap from="~maslo/loop_closure_detection_in" to="/maslo/loop_closure_detection" />
+        <remap from="~maslo/mapping/orientation_in" to="/maslo/orientation_in" />
+
+        <!-- publishers -->
+        <remap from="~maslo/mapping/trajectory_out" to="/maslo/mapping/trajectory" />
+        <remap from="~maslo/mapping/map_global_out" to="/maslo/mapping/map_global" />
+        <remap from="~maslo/mapping/odometry_out" to="/maslo/mapping/odometry" />
+        <remap from="~maslo/mapping/odometry_incremental_out" to="/maslo/mapping/odometry_incremental" />
+        <remap from="~maslo/mapping/path_out" to="/maslo/mapping/path" />
+        <remap from="~maslo/mapping/icp_loop_closure_history_cloud_out" to="/maslo/mapping/icp_loop_closure_history_cloud" />
+        <remap from="~maslo/mapping/icp_loop_closure_corrected_cloud_out" to="/maslo/mapping/icp_loop_closure_corrected_cloud" />
+        <remap from="~maslo/mapping/loop_closure_constraints_out" to="/maslo/mapping/loop_closure_constraints" />
+        <remap from="~maslo/mapping/map_local_out" to="/maslo/mapping/map_local" />
+        <remap from="~maslo/mapping/cloud_registered_out" to="/maslo/mapping/cloud_registered" />
+        <remap from="~maslo/mapping/cloud_registered_raw_out" to="/maslo/cloud_registered_raw" />
+
+      </node>
+<!--//}-->
+
+</launch>

@@ -151,7 +151,7 @@
         <remap from="~maslo/mapping/loop_closure_constraints_out" to="$(arg node_prefix)maslo/mapping/loop_closure_constraints" />
         <remap from="~maslo/mapping/map_local_out" to="$(arg node_prefix)maslo/mapping/map_local" />
         <remap from="~maslo/mapping/cloud_registered_out" to="$(arg node_prefix)maslo/mapping/cloud_registered" />
-        <remap from="~maslo/mapping/cloud_registered_raw_out" to="$(arg node_prefix)lioam/cloud_registered_raw" />
+        <remap from="~maslo/mapping/cloud_registered_raw_out" to="$(arg node_prefix)maslo/cloud_registered_raw" />
 
       </node>
 <!--//}-->
