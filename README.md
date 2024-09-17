@@ -1,7 +1,7 @@
 # Motor Angular Speeds - Lidar Odometry (MAS-LO)
 
 This repository contains the public open-source implementation of the MAS-LO algorithm proposed in our T-RO publication [1].
-The implementation is developed for ROS1 Noetic and Ubuntu 20.04.
+The implementation is developed for ROS1 Noetic and Ubuntu 20.04 and depends on the preintegrated [MAS Factor](https://github.com/ctu-mrs/mas_factor) and [GTSAM](https://github.com/borglab/gtsam) fractor graph optimization framework.
 If you use our work please cite the publication.
 
 ![](.fig/maslo_pipeline.png)
@@ -37,18 +37,23 @@ To compensate for drift accumulated during the preintegration, compensate the no
 
 For running an example on our public [datasets](https://github.com/ctu-mrs/mas_datasets) follow these steps:
 
-1. Clone this repository and the [datasets](https://github.com/ctu-mrs/mas_datasets) into your ROS1 workspace and build the workspace:
+1. Install the GTSAM dependency:
+```bash
+sudo apt install ros-noetic-gtsam
+```
+2. Clone this repository, the MAS factor and the datasets into your ROS1 workspace and build the workspace:
 ```bash
 roscd && cd ../src/
-git clone https://github.com/ctu-mrs/mas_datasets
 git clone https://github.com/ctu-mrs/maslo
+git clone https://github.com/ctu-mrs/mas_factor
+git clone https://github.com/ctu-mrs/mas_datasets
 catkin build && roscd && source ./setup.sh
 ```
-2. Download the datasets:
+3. Download the datasets:
 ```bash
 roscd mas_datasets && ./download_processed.sh
 ```
-3. Run the example:
+4. Run the example:
 ```bash
 roscd maslo && ./example/start.sh
 ```
