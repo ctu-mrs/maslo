@@ -66,7 +66,7 @@ roscd maslo && ./example/start.sh
   organization={IEEE}
 }
 ```
-- Factor graph optimization built in the [GTSAM]{https://github.com/borglab/gtsam} framework
+- Factor graph optimization built in the [GTSAM](https://github.com/borglab/gtsam) framework
 ```bibtex
 @software{gtsam,
   author       = {Frank Dellaert and GTSAM Contributors},
