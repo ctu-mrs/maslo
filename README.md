@@ -50,7 +50,7 @@ git clone https://github.com/ctu-mrs/mas_factor
 git clone https://github.com/ctu-mrs/mas_datasets
 catkin build && roscd && source ./setup.sh
 ```
-3. Download the datasets:
+3. Download the processed datasets:
 ```bash
 roscd mas_datasets && ./download_processed.sh
 ```
@@ -72,7 +72,7 @@ roscd maslo && ./example/start.sh
   organization={IEEE}
 }
 ```
-- Factor graph optimization built in the [GTSAM](https://github.com/borglab/gtsam) framework
+- Factor graph optimization is built in the [GTSAM](https://github.com/borglab/gtsam) framework
 ```bibtex
 @software{gtsam,
   author       = {Frank Dellaert and GTSAM Contributors},
