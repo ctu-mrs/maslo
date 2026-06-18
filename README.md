@@ -11,7 +11,7 @@ The implementation is developed for ROS1 Noetic and Ubuntu 20.04 and depends on 
 
 - [1] Petrlik, M.; Novak, F.; Penicka, R.; Saska, M. *Motor Angular Speed Preintegration for Multirotor UAV State Estimation*, Robotics and Autonomous Systems (in review), 2026
 ```bibtex
-@article{petrlik2024maslo,
+@article{petrlik2026maslo,
   author={Petrlik, Matej and Novak, Filip and Penicka, Robert and Saska, Martin}, 
   journal={Robotics and Autonomous Systems}, 
   title={{Motor Angular Speed Preintegration for Multirotor UAV State Estimation}}, 
